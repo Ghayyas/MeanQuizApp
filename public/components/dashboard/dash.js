@@ -50,16 +50,16 @@ var that = this;
               that.userResults = true;
                 console.log('userID', userID);
                $http.post(heroku+'/findAllResults',{userID: userID}).then(function(data){
-                   console.log("user results " ,data.data);
+                   console.log("user results " ,data.data.data);
                    
-                   if(data.data == ""){
+                   if(data.data.data == ""){
                           that.users = false;
                           that.userResults = false;
                           that.errShow = true;
                           that.showError = "There is no Result to Show";
                    }
                    else{
-                      that.userResult = data.data;    
+                      that.userResult = data.data.data;    
                           that.users = false;
                           that.userResults = true;
                           that.errShow = false;
