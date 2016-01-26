@@ -156,8 +156,9 @@ exports.addQuestion = (req,res)=>{
     
 }
 
-exports.getquiz = (req,res)=>{
+exports.getquizes = (req,res) => {
    //let quizName = req.body.paper;
+   console.log('getquizes')
    console.log(req.body.paper)
    //quizName = quizName.toLowerCase();
 //    console.log("Selected paper :",req.body.q_id1);

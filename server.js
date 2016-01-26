@@ -18,7 +18,7 @@ app.use(express.static(Ipublic));
 app.post('/registerUser', database.registerUser);
 app.post('/loginUser', database.loginUser);
 app.post('/addQuestion', database.addQuestion);
-app.post('/getquiz', database.getquiz);
+app.post('/getquizes', database.getquizes);
 app.post("/saveResult", database.saveResult);
 app.post('/showResult', database.showResult);
 app.post('/userProfile/:uid', database.userProfile);
