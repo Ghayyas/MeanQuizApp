@@ -32,8 +32,8 @@
           <div class="container">
           <div ng-show="quiz_box">
                <form name="quiz-form"> 
-                   <pre style="margin: 112px 0 54px;padding: 36.5px;">{{quiz.question}} </pre>
-                   <div ng-repeat="user in data.data">{{user.question}}</div>
+                   <pre style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in data.data">{{user.question}}</pre>
+                  
 
                    <ul style="list-style: none;" ng-show="quiz.questionType == 'radioBox'">
                        <li><input type="radio" ng-model="selectedOption.option" value="op1"  name="u_a" /> {{quiz.op1}}</li>
