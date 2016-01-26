@@ -1,0 +1,57 @@
+
+<style>
+    body{
+        background-image: url('../img/home/background-image.jpg'); 
+    }
+    
+    </style>
+
+
+ <div layout="column" layout-align="center center" style="position: relative; margin-top: 42px;">
+
+
+       <md-card class="signUpCard">
+
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">Contact</span>
+          </md-card-title-text>
+        </md-card-title>
+
+        <md-card-content>
+           
+<form ng-submit="send()" novalidate>
+        <md-content layout="column" layout-padding>
+
+      <md-input-container>
+        <label>Your Name</label>
+        <input type="text" ng-model="sendto.senderName" required/>
+       
+      </md-input-container>
+            <md-input-container>
+        <label>Email Address</label>
+        <input type="email" ng-model="sendto.from" required/>
+      </md-input-container>
+      <md-input-container>
+        <label>Subject</label>
+        <input type="text" ng-model="sendto.emailSubject" />
+      </md-input-container>
+            <md-input-container>
+        <label>Your Message</label>
+               <textarea ng-model="sendto.htmlCode" ng-minlength="6"></textarea>
+      </md-input-container>
+
+  </md-content>
+  <div layout="row" layout-align="center center">
+        <md-button type="submit" class="md-raised md-primary" ng-disabled="!sendto.senderName || !sendto.from || !sendto.emailSubject || !sendto.htmlCode"> Send
+        </md-button>
+  </div>
+
+
+        </form>
+
+        </md-card-content>
+        
+      </md-card>
+
+ </div>

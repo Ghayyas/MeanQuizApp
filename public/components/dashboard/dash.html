@@ -1,0 +1,51 @@
+
+<div ng-show="dash.isAdmin" class="container">
+
+
+   <md-button class="md-raised md-primary" style="margin-top: 78px;float: right;" ui-sref="addquestion">Add Quesitons </md-button>
+   <div ng-show="dash.users">
+   <table class="table table-bordered table-hover">
+   
+ <tr><th>User Email Address</th>
+    <th>User Name</th>
+    <th>User Password</th>
+    <th>Join Date</th>
+    <th>Results</th></tr>
+    <tr ng-repeat="user in dash.users">
+        <td>{{user.userEmail}}</td>
+    <td>{{user.userName}}</td>
+    <td>{{user.userPass}}</td>
+    <td>{{user.Date | date: 'medium' }}</td>
+    <td><md-button class="md-raised" ng-click="showUserResult(user._id)">Show Results</md-button></td></tr>
+    <!--<li ng-repeat="user in dash.users">User Email Address: {{user.userEmail}} <br/> user Name : {{user.userName}}<br/> user Password: {{user.userPass}}<br/>
+</li>-->
+</table>
+   </div>
+<div ng-show="dash.userResults">
+    <md-button class="material-icons" style="float: right; margin-top: 82px;" ng-click="dash.back2users()">arrow_back</md-button>
+       <table class="table table-bordered table-hover">
+           
+       <tr><th>
+           Quiz Topic
+       </th>
+       <th>Results</th>
+       <th>Date</th></tr>
+       <tr ng-repeat="result in dash.userResult">
+           <td>{{result.quizTopic}}</td>
+           <td>{{result.userResult}}</td>
+           <td>{{result.date}}</td>
+       </tr>
+       </table>
+    
+<!--<ul><li ng-repeat="result in dash.userResult">
+    {{result.quizTopic}} user result {{result.userResult}}
+</li></ul>-->
+</div>
+<div ng-show="dash.errShow">
+        <md-button class="material-icons" style="float: right; margin-top: 82px;" ng-click="dash.back2users()">arrow_back</md-button>
+     <div layout='row' layout-align="center center">
+     <h3 style="margin-top: 161px; margin-bottom: 141px;">  <i>   {{dash.showError}}  </i> </h3>
+     </div>
+</div>
+
+</div>

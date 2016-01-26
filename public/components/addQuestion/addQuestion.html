@@ -1,0 +1,60 @@
+<div>
+<div layout="column" layout-align="center center">
+<form ng-submit="saved()" style="margin-top:78px;">
+    
+    <div class="form-group">
+    <label for="comment">Enter Your Question:</label>
+      <textarea class="form-control" rows="5" ng-model="question.ques" id="comment"></textarea>
+    </div>
+    
+        <!--<textarea ng-model="question.ques" placeholder="Enter Your Question">
+        </textarea>-->
+      <!--  <input type="text" name="" ng-model="user.userEmail" placeholder="Enter your Email"> -->
+      <div ng-if="question.questionType == 'radioBox'">
+
+        <input type="radio"  ng-model="question.rightAnswer" value="op1">
+          <md-input-container> <input type="text" class="form-control" ng-model="question.op1" placeholder="Enter your option 1"></md-input-container>
+        <input type="radio"  ng-model="question.rightAnswer" value="op2"> 
+       <md-input-container> <input type="text" name="" class="form-control" ng-model="question.op2" placeholder="Enter your option 2"></md-input-container>
+        <input type="radio" ng-model="question.rightAnswer"  value="op3">  
+        <md-input-container><input type="text" name="" ng-model="question.op3" class="form-control" placeholder="Enter your option 3"></md-input-container>
+        <input type="radio" ng-model="question.rightAnswer" value="op4"> 
+        <md-input-container><input type="text" name="" ng-model="question.op4" class="form-control" placeholder="Enter your option 4"></md-input-container>
+       <br/>
+      
+      </div>
+      <div ng-if="question.questionType== 'checkBox'">
+        <input type="checkbox" checklist-model="question.rightAnswer" value="op1">
+        <md-input-container><input type="text" name="" ng-model="question.op1" placeholder="Enter your option 1"></md-input-container>
+        <input type="checkbox" checklist-model="question.rightAnswer" value="op2"> 
+        <md-input-container><input type="text" name="" ng-model="question.op2" placeholder="Enter your option 2"></md-input-container>
+        <input type="checkbox" checklist-model="question.rightAnswer" value="op3">  
+      <md-input-container>  <input type="text" name="" ng-model="question.op3" placeholder="Enter your option 3"></md-input-container>
+        <input type="checkbox" checklist-model="question.rightAnswer" value="op4"> 
+       <md-input-container> <input type="text" name="" ng-model="question.op4" placeholder="Enter your option 4"></md-input-container>
+       <br/>
+      </div>
+            
+      <md-select ng-model="question.questionType" placeholder="Select your Quiz Type">
+            <md-option value="checkBox">
+                  Check Box
+           </md-option>
+              <md-option value="radioBox">
+                   Radio Box
+       </md-option>
+
+       </md-select>
+       <!--<input type="text" ng-model="question.questionType" placeholder="question type">-->
+       
+       <label>Quiz Name: </label>
+       
+       <input type="radio" ng-model="question.quizName" value="HTML5">HTML5
+       <input type="radio" ng-model="question.quizName" value="CSS3">CSS 3
+       <input type="radio" ng-model="question.quizName" value="JavaScript"> JavaScript
+       
+        <md-button class="md-raised md-primary" type="submit" value="saved Quiz" ng-disabled="!question.quizName||!question.rightAnswer">Saved Quiz </md-button>
+        {{data}}
+        
+    </form>
+</div>
+</div>

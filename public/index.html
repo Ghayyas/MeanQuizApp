@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="quizApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular quiz</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   
+    <link href="./node_modules/angular-material/angular-material.css" rel="stylesheet">
+
+        <!--Including boot strap CDN-->
+    <!-- Latest compiled and minified CSS -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!--Closing boot strap CDN-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+       <link href="./stylesheet/style.css" rel="stylesheet">
+
+
+
+    <script src="./node_modules/angular/angular.js"></script>
+    <script src="./node_modules/angular-animate/angular-animate.js"></script>
+    <script src="./node_modules/angular-aria/angular-aria.js"></script>
+    <script src="./node_modules/angular-material/angular-material.js"></script>
+    <script src="./node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="./node_modules/checklist-model/checklist-model.js"></script>
+
+                   <!--<script src="./script/jssor.slider.mini.js"></script>    
+        <script src="./script/docs.min.js"></script>
+    <script src="./script/ie10-viewport-bug-workaround.js"></script>        -->
+
+
+    <script src="./script/script.js"></script>
+    <script src="./script/config.js"></script>
+
+    <!--<script src="./script/jqueryfile.js"></script>-->
+    <script src="./components/home/home.js"></script>
+    <script src="./components/login/login.js"></script>
+    <script src="./components/signup/signup.js"></script>
+    <script src="./components/addQuestion/addQuestion.js"></script>
+    <script src="./components/getQuestion/getquestion.js"></script>
+    <script src="./components/dashboard/dash.js"></script>
+    <script src="./components/userprofile/userprofile.js"></script>
+    <script src="./components/about/about.js"></script>
+        <script src="./components/contact/contact.js"></script>
+    
+    
+</head>
+<body ng-controller="quizCtrl">
+    
+        <!-- NAVBAR
+    ================================================== -->
+</br>
+    <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0px;">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Q for Quizzerzz</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a ui-sref="getquestion">Get Quiz Online</a></li>
+                        <li><a ui-sref="dashboard">Admin Dashboard</a></li>
+                        <!--<li><a ui-sref="#">Tutorials</a></li>-->
+                        <!--<li><a ui-sref="userprofile">My Profile</a></li>-->
+                        <li><a ui-sref="aboutus">About</a></li>
+                        <li><a ui-sref="contact">Contact</a></li>
+
+
+                    </ul>
+                    <div ng-show="!isLogin">
+                      <md-button class="md-raised  pull-right myBtn" ui-sref="signin">Sign in</md-button> 
+                    </div>
+                     <div ng-show="isLogin">
+                      <md-button class="md-raised  pull-right myBtn" ng-click="signOut()">Sign Out</md-button> 
+                    </div>
+                </div>
+
+            </div>
+
+        </nav>
+</div>
+    
+    
+    
+    <ui-view></ui-view>
+    
+    <!--<form ng-submit="submit()">
+        <input type="text" name="" ng-model="user.userName" placeholder="Enter Your Name">
+        <input type="text" name="" ng-model="user.userEmail" placeholder="Enter your Email">
+        <input type="text" name="" ng-model="user.userPass" placeholder="Enter your Password">
+        <input type="submit" value="Submit">
+        
+    </form>
+    
+    <form ng-submit="login()">
+        <input type="text" name="" ng-model="user2.userName" placeholder="Enter Your Name">
+      <!--  <input type="text" name="" ng-model="user.userEmail" placeholder="Enter your Email"> -->
+       <!-- <input type="text" name="" ng-model="user2.userPass" placeholder="Enter your Password">
+        <input type="submit" value="login">
+        
+    </form>
+    
+        <form ng-submit="saved()">
+        <input type="text" name="" ng-model="question.ques" placeholder="Enter Your Question">
+      <!--  <input type="text" name="" ng-model="user.userEmail" placeholder="Enter your Email"> -->
+    <!--  <input type="radio" ng-model="question.rightAnswer" value="op1">
+        <input type="text" name="" ng-model="question.op1" placeholder="Enter your option 1">
+       <input type="radio" ng-model="question.rightAnswer" value="op2"> 
+       <input type="text" name="" ng-model="question.op2" placeholder="Enter your option 2">
+      <input type="radio" ng-model="question.rightAnswer" value="op3">  
+      <input type="text" name="" ng-model="question.op3" placeholder="Enter your option 3">
+       <input type="radio" ng-model="question.rightAnswer" value="op4"> 
+       <input type="text" name="" ng-model="question.op4" placeholder="Enter your option 4">
+       <br/>
+       <label>Quiz Name: </label>
+       
+       <input type="radio" ng-model="question.quizName" value="HTML5">HTML5
+       <input type="radio" ng-model="question.quizName" value="CSS3">CSS 3
+       <input type="radio" ng-model="question.quizName" value="JavaScript"> JavaScript
+       
+        <input type="submit" value="saved Quiz">
+        {{data}}
+        
+    </form>
+    
+    
+    <button ng-click="topic()">Select Your Topic</button>
+         <button ng-click="startQuiz()"> Start Quiz</button>
+         
+         <input type="radio" ng-model="selectedPaper" value="HTML5">HTML5
+       <input type="radio" ng-model="selectedPaper" value="CSS3">CSS 3
+       <input type="radio" ng-model="selectedPaper" value="JavaScript"> JavaScript
+         
+
+          
+          
+          
+          <div ng-show="quiz_box">
+               <div> 
+                   <p>Q:{{quiz.question}} ?</p>
+                   <ul style="list-style: none;">
+                       <li><input type="radio" ng-model="selectedOption.option" value="op1"  name="u_a" /> {{quiz.op1}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op2" name="u_a" /> {{quiz.op2}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op3" name="u_a" /> {{quiz.op3}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op4" name="u_a" /> {{quiz.op4}}</li>
+                   </ul>
+               </div><!--current_q--->
+             <!--  <p style="color: red">{{err_message}}</p>
+               <button ng-show="prev_btn" class="btn btn-warning" ng-click="change_q('prev')">Previous</button>
+               <button ng-show="next_btn" class="btn btn-success" ng-click="change_q('next')" >Next</button>
+               <button ng-show="result_btn" class="btn btn-primary" ng-click="generate_result()" > Show Result</button>
+           </div><!--quiz_box--->
+           <!-- <button ng-click="nextQuestion()">next</button>
+           
+           <div ng-show="result">
+          {{correct}}
+          {{percentage}}
+           </div>-->
+           
+              
+</body>
+
+ <div class="container marketing"> 
+           <hr class="featurette-divider">
+
+
+        <!-- /END THE FEATURETTES -->
+        <!-- FOOTER -->
+       <footer>
+          <div layout='row' layout-align="start end">
+            <p>&copy; Ramsha Enterprises {{myDate | date: 'yyyy'}}. &middot; </p>
+        </footer>
+               </div>
+               </div>
+</html>

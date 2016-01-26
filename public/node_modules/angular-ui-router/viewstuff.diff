@@ -1,0 +1,496 @@
+diff --git a/src/view/view.ts b/src/view/view.ts
+index 2bd27f0..477e79d 100644
+--- a/src/view/view.ts
++++ b/src/view/view.ts
+@@ -4,6 +4,7 @@ import {IDeferred} from "angular";
+ 
+ interface config {
+   controllerProvider?: Function;
++  controllerAs?: string;
+   controller?: any;
+   template?: any;
+   templateUrl?: any;
+@@ -32,13 +33,13 @@ class ViewConfig {
+ /**
+  * Gets the controller for a view configuration.
+  *
+- * @param {Object} context A context object from transition.context() to invoke a function in the correct context
++ * @param {Function} locals A context object from transition.context() to invoke a function in the correct context
+  *
+  * @returns {Function|Promise.<Function>} Returns a controller, or a promise that resolves to a controller.
+  */
+-  controller(context = {invoke: noop}) {
+-    var cfg = this.config, provider = this.config.controllerProvider;
+-    return isInjectable(provider) ? context.invoke(provider) : cfg.controller;
++  controller(locals: Function) {
++    var cfg = this.config, provider = cfg.controllerProvider;
++    return isInjectable(provider) ? locals(provider) : cfg.controller;
+   }
+ 
+ /**
+@@ -50,8 +51,8 @@ class ViewConfig {
+     return !!(this.config.template || this.config.templateUrl || this.config.templateProvider);
+   }
+ 
+-  template($factory, params, context) {
+-    return $factory.fromConfig(this.config, params, context.invoke.bind(context));
++  template($factory, params, locals) {
++    return $factory.fromConfig(this.config, params, locals);
+   }
+ }
+ 
+@@ -84,14 +85,14 @@ class ViewQueue {
+  *                        `async` is `false`, will return a rejected promise.
+  * @param {Object} config The view configuration to be assigned to the named `uiView`. Should
+  *                        include a `$template` key containing the HTML string to render, and
+- *                        can optionally include a `$controller`, `$locals`, and a `$context`
++ *                        can optionally include a `$controller`, `$locals`, and a `context`
+  *                        object, which represents the object responsibile for the view (i.e.
+  *                        a UI state object), that can be used to look up the view later by a
+  *                        relative/non-fully-qualified name.
+  */
+   push(name, async, config) {
+-    if (config && config.$context && this.waiting.length) {
+-      this.digest(name, config.$context.state);
++    if (config && config.context && this.waiting.length) {
++      this.digest(name, config.context);
+     }
+     if (this.views[name]) {
+       this.views[name](config);
+@@ -99,7 +100,7 @@ class ViewQueue {
+       return config;
+     }
+     var err = "Attempted to synchronously load template into non-existent view " + name;
+-    return (async) ? (this.map[name] = config) : new Error(err);
++    return (async) ? (this.queued[name] = config) : new Error(err);
+   }
+ 
+ /**
+@@ -136,6 +137,70 @@ class ViewQueue {
+     this.waiting.push({ stateContext: stateContext, defer: defer });
+     return defer ? defer.promise : null;
+   }
++
++  clear() {
++    this.queued = {}
++    this.waiting = [];
++  }
++}
++
++
++/**
++ * @ngdoc object
++ * @name ui.router.state.$view
++ *
++ * @description
++ * Represents a resolved template, controller (optional), and locals, to be passed to a view
++ * directive.
++ */
++class ViewState {
++  _state: any;
++
++  constructor(state) {
++    this._state = state;
++  }
++
++  state() {
++    return this._state;
++  }
++
++  controller() {
++    return this._state.controller;
++  }
++
++  template() {
++    return this._state.template;
++  }
++
++  controllerAs() {
++    return this._state.controllerAs;
++  }
++
++  context() {
++    return this._state.context;
++  }
++
++  reload() {
++    return !!this._state.reload;
++  }
++
++  /**
++   * @returns {Promise.<Object>} Returns a promise for an object hash representing the local values
++   *          for this view's controller.
++   */
++  locals() {
++    return this._state.locals;
++  }
++
++  eq(viewState: ViewState) {
++    return (
++      viewState &&
++      viewState instanceof ViewState &&
++      this._state.controller === viewState.controller() &&
++      this._state.template === viewState.template() &&
++      this._state.context === viewState.context()
++    );
++  }
+ }
+ 
+ /**
+@@ -190,8 +255,10 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+     var opts = defaults(options, {
+       context:            null,
+       parent:             null,
++      locals:             { get: angular.noop, invoke: angular.noop },
+       notify:             true,
+       async:              true,
++      reload:             false,
+       params:             {}
+     });
+ 
+@@ -224,24 +291,21 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+     }
+     var fqn = (opts.parent) ? this.find(name, opts.parent) : name;
+ 
+-    var promises = {
+-      template: $q.when(viewConfig.template($templateFactory, opts.params, opts.context)),
++    return $q.all({
++      template:   $q.when(viewConfig.template($templateFactory, opts.params, opts.context)),
+       controller: viewConfig.controller(opts.context),
+-      viewName: fqn ? $q.when(fqn) : viewQueue.waitFor(opts.parent, $q.defer()).then(function (parent) {
++      viewName:   fqn ? $q.when(fqn) : viewQueue.waitFor(opts.parent, $q.defer()).then(function (parent) {
+         return parent + "." + name;
+       })
+-    };
+-
+-    return $q.all(promises).then(function addViewToQueue(results) {
+-      var pushOpts = {
+-        async: opts.async,
+-        template: results.template,
+-        controller: results.controller,
+-        $context: opts.context
+-      };
+-
+-      var queuedConfig = viewQueue.push(results.viewName, opts.async, extend(viewConfig, pushOpts));
+-      return qIfy(queuedConfig);
++    }).then(function addViewToQueue(results) {
++      return qIfy(viewQueue.push(results.viewName, opts.async, new ViewState({
++        reload:       opts.reload,
++        template:     results.template,
++        controller:   results.controller,
++        controllerAs: viewConfig.controllerAs,
++        context:      opts.context,
++        locals:       results.controller ? opts.locals.get(results.controller) : $q.when({})
++      })));
+     });
+   };
+ 
+@@ -259,19 +323,21 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+   /**
+    * Syncs a set of view configurations 
+    */
+-  this.sync = function sync (configs) {
++  this.sync = function sync (configs, options) {
++    var jobs = [], self = this, options = defaults(options, {
++      reload: false
++    });
++
+     forEach(configs, function(cfg) {
+-      var context = cfg[0], views = cfg[1], params = cfg[2];
+-
+-      forEach(views, function(view, name) {
+-        //if (view.controllerProvider) debugger;
+-        this.load(name, extend(view, {
+-          params: params,
+-          context: context,
+-          parent: context.state.parent.name ? context.state.parent : null
+-        }));
++      forEach(cfg.views, function(view, name) {
++        jobs.push(this.load(name, extend({}, options, view, cfg)));
+       }, this);
+     }, this);
++
++    var result = $q.all(jobs);
++    // result.then(function() { viewQueue.clear(); });
++
++    return result;
+   };
+ 
+   /**
+@@ -288,8 +354,9 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+     viewDefs[name].$config = null;
+     viewQueue.pop(name, configUpdatedCallback);
+ 
+-    return function() {
++    return function(currentConfig) {
+       delete viewDefs[name];
++      if (currentConfig) viewQueue.push(name, true, currentConfig);
+     };
+   };
+ 
+@@ -298,11 +365,11 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+    *
+    * @param {String} name The fully-qualified dot-separated name of the view, if `context` is not
+             specified. If `context` is specified, `name` should be relative to the parent `context`.
+-   * @param {Object} contextState Optional parent state context in which to look for the named view.
++   * @param {Object} context Optional parent state context in which to look for the named view.
+    * @return {Boolean} Returns `true` if the view exists on the page, otherwise `false`.
+    */
+-  this.exists = function exists (name, contextState) {
+-    return isDefined(viewDefs[contextState ? this.find(name, contextState) : name]);
++  this.exists = function exists(name, context) {
++    return isDefined(viewDefs[context ? this.find(name, context) : name]);
+   };
+ 
+   /**
+@@ -310,19 +377,19 @@ function $View(   $rootScope,   $templateFactory,   $q) {
+    * by the parent view's context object.
+    *
+    * @param {String} name A relative view name.
+-   * @param {Object} contextState The context state object of the parent view in which to look up the view to
++   * @param {Object} context The context state object of the parent view in which to look up the view to
+    *        return.
+    * @return {String} Returns the fully-qualified view name, or `null`, if `context` cannot be found.
+    */
+-  this.find = function find (name, contextState) {
++  this.find = function find (name, context) {
+     var result;
+ 
+     if (isArray(name)) {
+-      return map(name, function(name) { return this.find(name, contextState); });
++      return map(name, function(name) { return this.find(name, context); });
+     }
+ 
+     forEach(viewDefs, function(def, absName) {
+-      if (parse("$config.$context.state")(def) !== contextState) {
++      if (parse("$config.context")(def) !== context) {
+         return;
+       }
+       result = absName + "." + name;
+diff --git a/src/view/viewDirective.ts b/src/view/viewDirective.ts
+index aab4ea8..ee05f5c 100644
+--- a/src/view/viewDirective.ts
++++ b/src/view/viewDirective.ts
+@@ -134,14 +134,6 @@ function $ViewDirective(   $view,   $animate,   $uiViewScroll,   $interpolate) {
+     };
+   }
+ 
+-  function configsEqual(config1, config2) {
+-    return (config1 === config2) || (config1 && config2 && (
+-      config1.controller === config2.controller &&
+-      config1.template   === config2.template &&
+-      parse("context.state")(config1) === parse("context.state")(config2)
+-      ));
+-  }
+-
+   var directive = {
+     restrict: 'ECA',
+     terminal: true,
+@@ -151,28 +143,26 @@ function $ViewDirective(   $view,   $animate,   $uiViewScroll,   $interpolate) {
+ 
+       return function (scope, $element, attrs) {
+         var previousEl, currentEl, currentScope, unregister,
+-            onloadExp     = attrs.onload || '',
+-            autoScrollExp = attrs.autoscroll,
+-            renderer      = getRenderer(attrs, scope),
+-            viewConfig    = {},
+-            inherited     = $element.inheritedData('$uiView'),
+-            name          = $interpolate(attrs.uiView || attrs.name || '')(scope) || '$default';
++            onloadExp  = attrs.onload || '',
++            autoScroll = attrs.autoscroll,
++            renderer   = getRenderer(attrs, scope),
++            inherited  = $element.inheritedData('$uiView'),
++            name       = $interpolate(attrs.uiView || attrs.name || '')(scope) || '$default';
+ 
+         var viewData = {
+-          name: (inherited && inherited.name) ? inherited.name + "." + name : name
++          name: (inherited && inherited.name) ? inherited.name + "." + name : name,
++          current: null
+         };
+         $element.data('$uiView', viewData);
+ 
+         updateView();
+ 
+-        function configUpdatedCallback(config) {
+-          if (configsEqual(viewConfig, config)) return;
+-          updateView(config);
+-        }
++        unregister = $view.register(viewData.name, function(newState) {
++          (newState.eq(viewData.current) && !newState.reload()) || updateView(newState);
++        });
+ 
+-        unregister = $view.register(viewData.name, configUpdatedCallback);
+         scope.$on("$destroy", function() {
+-          unregister();
++          unregister(viewData.current);
+         });
+ 
+ 
+@@ -197,26 +187,14 @@ function $ViewDirective(   $view,   $animate,   $uiViewScroll,   $interpolate) {
+           }
+         }
+ 
+-        function updateView(config?: any) {
+-          config = config || {};
++        function updateView(viewState?: any) {
+           var newScope = scope.$new();
+-
+-          extend(viewData, {
+-            $template: config.template,
+-            $$controller: config.controller,
+-            $$controllerAs: config.config && config.config.controllerAs,
+-            $context: config.$context
+-          });
++          viewData.current = viewState || null;
+ 
+           var clone = $transclude(newScope, function(clone) {
+             renderer.enter(clone.data('$uiView', viewData), $element, function onUiViewEnter() {
+-              if(currentScope) {
+-                currentScope.$emit('$viewContentAnimationEnded');
+-              }
+-
+-              if (isDefined(autoScrollExp) && !autoScrollExp || scope.$eval(autoScrollExp)) {
+-                $uiViewScroll(clone);
+-              }
++              if (currentScope) currentScope.$emit('$viewContentAnimationEnded');
++              if (isDefined(autoScroll) && !autoScroll || scope.$eval(autoScroll)) $uiViewScroll(clone);
+             });
+             cleanupLastView();
+           });
+@@ -233,7 +211,7 @@ function $ViewDirective(   $view,   $animate,   $uiViewScroll,   $interpolate) {
+            *
+            * @param {Object} event Event object.
+            */
+-          currentScope.$emit('$viewContentLoaded', config || viewConfig);
++          currentScope.$emit('$viewContentLoaded', viewData.name, viewData.current);
+           currentScope.$eval(onloadExp);
+         }
+       };
+@@ -253,27 +231,22 @@ function $ViewDirectiveFill (  $compile,   $controller,   $interpolate,   $injec
+ 
+       return function (scope, $element) {
+         var data = $element.data('$uiView');
+-        if (!data) return;
++        if (!data || !data.current) return;
++        var config = data.current;
+ 
+-        $element.html(data.$template || initial);
++        $element.html(config.template() || initial);
+ 
+         var link = $compile($element.contents());
+ 
+-        if (data.$$controller) {
+-          var context = data.$context, annotatedFn = data.$$controller;
+-          if (isString(data.$$controller)) {
+-            annotatedFn = function() {};
+-            annotatedFn.$inject = annotateController($controller, $injector, data.$$controller);
+-          }
++        if (!config.controller()) return link(scope);
+ 
+-          context.getLocalsFor(annotatedFn).then(function(locals) {
+-            var controller = $controller(data.$$controller, extend(locals, { $scope: scope })); // $stateParams?
+-            if (data.$$controllerAs) scope[data.$$controllerAs] = controller;
++        config.locals().then(function(locals) {
++          var ctrl = $controller(config.controller(), extend(locals, { $scope: scope })); // $stateParams?
++          if (config.controllerAs) scope[config.controllerAs()] = ctrl;
+ 
+-            $element.data('$ngControllerController', controller);
+-            $element.children().data('$ngControllerController', controller);
+-          });
+-        }
++          $element.data('$ngControllerController', ctrl);
++          $element.children().data('$ngControllerController', ctrl);
++        });
+ 
+         link(scope);
+       };
+diff --git a/test/stateSpec.js b/test/stateSpec.js
+index 25d419d..0b88b5f 100644
+--- a/test/stateSpec.js
++++ b/test/stateSpec.js
+@@ -312,11 +312,15 @@ describe('state', function () {
+         url: "/:foo",
+         resolve: {
+           value: function ($timeout) {
+-            return $timeout(function() { log += "Success!"; }, 1);
++            return $timeout(function() {
++              log += "Success!";
++            }, 1);
+           }
+         },
+         template: "-",
+-        controller: function() { log += "controller;"}
++        controller: function() {
++          log += "controller;";
++        }
+       })
+       .state('badParam', {
+         url: "/bad/{param:int}"
+@@ -333,31 +337,31 @@ describe('state', function () {
+       // State param inheritance tests. param1 is inherited by sub1 & sub2;
+       // param2 should not be transferred (unless explicitly set).
+       .state('root', { url: '^/root?param1' })
+-      .state('root.sub1', {url: '/1?param2' })
++      .state('root.sub1', { url: '/1?param2' })
+       .state('logA', {
+         url: "/logA",
+-        template: "<div> <div ui-view/></div>",
+-        controller: function() {log += "logA;"}
++        template: "<div><div ui-view/></div>",
++        controller: function() { log += "logA;" }
+       })
+       .state('logA.logB', {
+         url: "/logB",
+-        views:{
+-          '$default':{
+-                template: "<div> <div ui-view/></div>",
+-                controller: function() {log += "logB;"}
++        views: {
++          '$default': {
++            template: "<div><div ui-view/></div>",
++            controller: function() { log += "logB;" }
+           }
+         }
+       })
+       .state('logA.logB.logC', {
+         url: "/logC",
+-        views:{
+-          '$default':{
+-                template: "<div> <div ui-view/></div>",
+-                controller: function() {log += "logC;"}
++        views: {
++          '$default': {
++            template: "<div><div ui-view/></div>",
++            controller: function() { log += "logC;" }
+           }
+         }
+       })
+-    $stateProvider.state('root.sub2', {url: '/2?param2' });
++    $stateProvider.state('root.sub2', { url: '/2?param2' });
+ 
+     $provide.value('AppInjectable', AppInjectable);
+   }));
+diff --git a/test/viewDirectiveSpec.js b/test/viewDirectiveSpec.js
+index 8b594b9..b231763 100644
+--- a/test/viewDirectiveSpec.js
++++ b/test/viewDirectiveSpec.js
+@@ -82,8 +82,8 @@ describe('uiView', function () {
+     controller: function() {
+       this.someProperty = "value"
+     },
+-    template: "hi",
+-    controllerAs: "vm"
++    controllerAs: "vm",
++    template: "{{ vm.someProperty }}"
+   },
+   lState = {
+     views: {
+@@ -300,7 +300,7 @@ describe('uiView', function () {
+   });
+ 
+   it('should instantiate a controller with controllerAs', inject(function($state, $q) {
+-    elem.append($compile('<div><ui-view>{{vm.someProperty}}</ui-view></div>')(scope));
++    elem.append($compile('<div><ui-view></ui-view></div>')(scope));
+     $state.transitionTo(kState);
+     $q.flush();
+ 

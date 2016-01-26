@@ -1,0 +1,71 @@
+
+<!--<div ng-show="isSignup">
+
+
+<form ng-submit="submit()">
+        <input type="text" name="" ng-model="user.userName" placeholder="Enter Your Name" ng-click="userName1()"><span ng-show="userName"> User Name Must Be unique</span>
+        <br/>
+        <input type="text" name="" ng-model="user.userEmail" placeholder="Enter your Email" ng-click="userEmail1()"><span ng-show="userEmail"> User Email Must Be unique</span>
+        <br/>
+        <input type="text" name="" ng-model="user.userPass"  placeholder="Enter your Password" ng-click="userPass1()"><span ng-show="userpass"> User pass Must Be unique</span>
+        <br/>
+        <input type="submit" value="Submit">
+        
+    </form>
+    
+</div>-->
+
+
+
+ <div layout="column" layout-align="center center" style="position: relative; margin-top: 42px;">
+
+
+       <md-card class="signUpCard">
+
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">Sign Up</span>
+          </md-card-title-text>
+        </md-card-title>
+
+        <md-card-content>
+            <div layout="row" layout-align="end end">
+        <md-button class="material-icons md-48" ui-sref="signin">exit_to_app</md-button>
+            </div>
+<form ng-submit="submit()" novalidate>
+        <md-content layout="column" layout-padding>
+
+      <md-input-container>
+        <label>User Name</label>
+        <input type="text" ng-model="user.userName" required ng-click="userName1()"><span ng-show="userName" style="color:red;"> User Name Must Be unique</span>
+       
+      </md-input-container>
+            <md-input-container>
+        <label>Email Address</label>
+        <input type="email" ng-model="user.userEmail" required
+         ng-click="userEmail1()">
+         <span ng-show="userEmail" style="color:red;"> User Email Must Be unique</span>
+      </md-input-container>
+      <md-input-container>
+        <label>Password</label>
+        <input type="password" ng-model="user.userPass" ng-click="userPass1()">
+      </md-input-container>
+            <md-input-container>
+        <label>Confirm Password</label>
+        <input type="password" ng-model="user.userPass2" ng-click="userPass1()">
+      </md-input-container>
+
+  </md-content>
+  <div layout="row" layout-align="center center">
+        <md-button type="submit" class="md-raised md-primary"> Sign Up
+        </md-button>
+  </div>
+
+
+        </form>
+
+        </md-card-content>
+        
+      </md-card>
+
+ </div>

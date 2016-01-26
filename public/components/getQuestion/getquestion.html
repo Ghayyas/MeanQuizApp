@@ -1,0 +1,93 @@
+     <div class="container">
+     
+       <div ng-show="_quiz_start">
+<div layout="column" layout-align="center center">
+
+<h3 layout layout-align="center end" style="margin-top: 70px;"> Wellcome User Please Select your Topic to Start your Quiz</h3>
+
+</div>
+
+         
+         <div style="text-align: center;">
+         <input type="radio"  ng-model="select.selectedPaper" value="HTML5" style="margin-right:28px;"><span>HTML</span>
+         <br/>
+                  <input type="radio" ng-model="select.selectedPaper" value="CSS3" style="margin-right:38px;"><span>CSS</span>
+         <br/>
+               <input type="radio" ng-model="select.selectedPaper" value="JavaScript"> <span>JavaScript </span>
+
+         
+
+         
+
+         </div>
+
+         <md-button class="md-raised" ng-click="startQuiz()" ng-disabled="!select.selectedPaper"> Start Quiz</md-button>
+
+       </div>
+        
+
+
+          
+          
+          <div class="container">
+          <div ng-show="quiz_box">
+               <form name="quiz-form"> 
+                   <pre style="margin: 112px 0 54px;padding: 36.5px;">{{quiz.question}} </pre>
+
+                   <ul style="list-style: none;" ng-show="quiz.questionType == 'radioBox'">
+                       <li><input type="radio" ng-model="selectedOption.option" value="op1"  name="u_a" /> {{quiz.op1}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op2" name="u_a" /> {{quiz.op2}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op3" name="u_a" /> {{quiz.op3}}</li>
+                       <li><input type="radio" ng-model="selectedOption.option" value="op4" name="u_a" /> {{quiz.op4}}</li>
+                   </ul>
+
+                   <ul style="list-style: none;" ng-show="quiz.questionType == 'checkBox'">
+                       <li><md-checkbox checklist-model="selectedOption.option" value="op1" aria-label="Green" /> {{quiz.op1}}</md-checkbox></li>
+                       <li><md-checkbox checklist-model="selectedOption.option" value="op2" aria-label="Green"/> {{quiz.op2}}</md-checkbox></li>
+                       <li><md-checkbox checklist-model="selectedOption.option" value="op3" aria-label="Green"/> {{quiz.op3}}</md-checkbox></li>
+                       <li><md-checkbox checklist-model="selectedOption.option" value="op4" aria-label="Green"/> {{quiz.op4}}</md-checkbox></li>
+                   </ul>
+               
+           <md-button class="md-raised md-primary question-btn-float-left" ng-click="nextQuestion()" ng-disabled="!selectedOption.option">Next</md-button>
+          </div>
+               </form>
+          <div ng-show="noQuiz" layout='row' layout-align="center center">
+          
+                                   <h3 style="margin-top: 161px; margin-bottom: 141px;">  <i>    There is no Quiz with this Topic  </i> </h3>
+                                          </div>
+           <div ng-show="result" style="text-align: center;margin-top: 141px;margin-bottom: 260px;">
+          
+          
+          <div> Correct Answer's Are: {{correct}}</div>
+          
+          <div> Your Percentage: {{percentage}}</div>
+           </div>
+          </div>
+          <div ng-show="results_result">
+           <md-button class="md-raised md-primary" ng-click="showLastResult()">Show my Last Result </md-button>
+          </div>
+           <div ng-show="lastResult" class="container"  style="margin-top: 98px;">
+           <table class="table table-bordered table-hover">
+               <thead>
+               <tr><th>Quiz Topic </th>
+               <th>You Score</th>
+               <th>Date</th>
+               </tr>
+               </thead>
+               
+                 <tr ng-repeat="percent in results">
+                   <td>{{percent.quizTopic}}</td>
+                   <td>{{percent.userResult}}</td>
+                   <td>{{percent.date}}</td>
+                   
+               </tr>
+               
+               <!--<li ng-repeat="percent in results">Quiz Topic Was: {{percent.quizTopic}} You Score : {{percent.userResult}} Date: {{percent.date}}</li>-->
+           </table>
+          
+           </div>
+           <div ng-show="noResult">
+               {{userResult}}
+           </div>
+     </div>
+           <div class="quiz-last"></div>
