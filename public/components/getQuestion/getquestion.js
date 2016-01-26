@@ -58,7 +58,7 @@ angular.module('app.getQuestion',[])
      
         },function(err)
         {
-            console.log("Request not send on server");
+            console.log("Request not send on server" , err);
         })
     }
     
