@@ -20,7 +20,7 @@ angular.module('app.addQuestion',[])
 
         console.log($scope.question)
         
-        $http.post('heroku/addQuestion',$scope.question).success(function(data){
+        $http.post(heroku +'/addQuestion',$scope.question).success(function(data){
           console.log('Success ' +data.msg);
           $scope.data = data.msg;
          $mdToast.show(
