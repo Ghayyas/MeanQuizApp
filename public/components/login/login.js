@@ -55,7 +55,7 @@
 
        else{
            
-        $http.post(heroku + '/loginUser', $scope.user2).then(function(data){
+        $http.post('/loginUser', $scope.user2).then(function(data){
        
         //console.log('data Recieved : ' +data.message);
         console.log("got Data", data);

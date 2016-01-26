@@ -32,8 +32,11 @@
           <div class="container">
           <div ng-show="quiz_box">
                <form name="quiz-form"> 
-                   <pre style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in questionArray">{{user}}</pre>
-                    
+                 <!-- <pre style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in questionArray">{{user}}</pre>-->
+                    <!--<div style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in quiz">-->
+                     <pre style="margin: 112px 0 54px;padding: 36.5px;">{{quiz.question}}</pre>
+                        
+                       
 
                    <ul style="list-style: none;" ng-show="quiz.questionType == 'radioBox'">
                        <li><input type="radio" ng-model="selectedOption.option" value="op1"  name="u_a" /> {{quiz.op1}}</li>
@@ -50,6 +53,7 @@
                    </ul>
                
            <md-button class="md-raised md-primary question-btn-float-left" ng-click="nextQuestion()" ng-disabled="!selectedOption.option">Next</md-button>
+          <!--</div>-->
           </div>
                </form>
           <div ng-show="noQuiz" layout='row' layout-align="center center">
