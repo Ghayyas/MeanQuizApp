@@ -45,7 +45,7 @@ angular.module('app.getQuestion',[])
         {
             
              $scope.questionArray = data.data;
-             console.log('queis array' ,data.data);
+             console.log('queis array' ,data.data.data);
              if($scope.questionArray == ""){
                  $scope.noQuiz = true;
                  $scope.quiz_box = false;
