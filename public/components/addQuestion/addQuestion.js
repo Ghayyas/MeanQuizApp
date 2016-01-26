@@ -1,5 +1,5 @@
 angular.module('app.addQuestion',[])
-.controller('addQuestionCtrl',function($scope,$http,$document,$state, $location,$mdToast){
+.controller('addQuestionCtrl',function($scope,$http,$document,$state, $location,$mdToast,heroku){
  var id = sessionStorage.id;
        //var userName = sessionStorage.userName;
         $document.ready(function(){
@@ -20,7 +20,7 @@ angular.module('app.addQuestion',[])
 
         console.log($scope.question)
         
-        $http.post('/addQuestion',$scope.question).success(function(data){
+        $http.post('heroku/addQuestion',$scope.question).success(function(data){
           console.log('Success ' +data.msg);
           $scope.data = data.msg;
          $mdToast.show(

@@ -1,5 +1,5 @@
 angular.module('app.signup',[])
-.controller('signupCtrl',function($scope,$http,$state,$mdToast){
+.controller('signupCtrl',function($scope,$http,$state,$mdToast,heroku){
     $scope.user = {};
    $scope.isSignup = true;
    $scope.userName = false;
@@ -30,7 +30,7 @@ angular.module('app.signup',[])
         
 
         
-        $http.post('/registerUser', $scope.user).then(function(data){
+        $http.post('heroku/registerUser', $scope.user).then(function(data){
             //console.log(data);
            
             if((($scope.user.userName == null)|| $scope.user.userEmail == null) ||$scope.user.userPass ==null) {

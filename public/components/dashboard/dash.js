@@ -1,5 +1,5 @@
 var app = angular.module('app.dash',[]);
-app.controller('dashCtrl',function($scope,$document,$http,$state,$rootScope){
+app.controller('dashCtrl',function($scope,$document,$http,$state,$rootScope,heroku){
 var that = this;
 
       var id = sessionStorage.id;
@@ -17,7 +17,7 @@ var that = this;
          //$scope.users = 0;
            that.users = true;
            that.userResults = false;
-          $http.post('/findAllUsers').then(function(data){
+          $http.post('heroku/findAllUsers').then(function(data){
            console.log("Getting response form Users" ,data);
            that.users = data.data.data;
            //console.log(that.users);
@@ -27,7 +27,7 @@ var that = this;
            that.errShow = false;  
            that.users = true;
            that.userResults = false;
-           $http.post('/findAllUsers').then(function(data){
+           $http.post('heroku/findAllUsers').then(function(data){
            console.log("Getting response form Users" ,data);
            that.users = data.data.data;
            });
@@ -49,7 +49,7 @@ var that = this;
               that.users = false;
               that.userResults = true;
                 console.log('userID', userID);
-               $http.post('/findAllResults',{userID: userID}).then(function(data){
+               $http.post('heroku/findAllResults',{userID: userID}).then(function(data){
                    console.log("user results " ,data.data);
                    
                    if(data.data == ""){

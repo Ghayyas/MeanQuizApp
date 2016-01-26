@@ -1,5 +1,5 @@
     var app = angular.module('app.signin',[])
-    app.controller('loginCtrl',function($scope,$mdToast,$http,$location,$document,$state, $rootScope){
+    app.controller('loginCtrl',function($scope,$mdToast,$http,$location,$document,$state, $rootScope,heroku){
     
     
          $scope.user2  = {}
@@ -55,7 +55,7 @@
 
        else{
            
-        $http.post('/loginUser', $scope.user2).then(function(data){
+        $http.post('heroku/loginUser', $scope.user2).then(function(data){
        
         //console.log('data Recieved : ' +data.message);
         console.log("got Data", data);
