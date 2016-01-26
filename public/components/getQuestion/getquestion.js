@@ -41,7 +41,7 @@ angular.module('app.getQuestion',[])
         
         //console.log("Selected Papervv:",$scope.selectedPaper);
         
-        $http.post('/getquizes',{paper:$scope.select.selectedPaper}).then(function(data)
+        $http.post(heroku +'/getquizes',{paper:$scope.select.selectedPaper}).then(function(data)
         {
             
              $scope.questionArray = data.data.data;
@@ -100,7 +100,7 @@ angular.module('app.getQuestion',[])
                   //var paper = $scope.selectedPaper;
                   
                  
-                  $http.post('/saveResult',{userName: userName, quizTopic:$scope.select.selectedPaper, userID: id, riteans_perc: per}).then(function(data){
+                  $http.post(heroku + '/saveResult',{userName: userName, quizTopic:$scope.select.selectedPaper, userID: id, riteans_perc: per}).then(function(data){
                       
                       console.log('data from save result ', data);
                       
