@@ -96,15 +96,17 @@ exports.addQuestion = function (req, res) {
             question_info.save(function (err, success) {
                 if (err) {
                     console.log('Error got ' + err);
+                    res.json({ success: false, data: err });
                 }
                 else {
                     console.log("Request got " + success);
+                    res.json({ success: true, data: success });
                 }
             });
         }
         else {
             console.log('Data Already exists');
-            res.json({ success: false, "msg": "There is error while sending.." });
+            res.json({ success: false, "msg": "This Question Already Exists.." });
         }
     });
 };
@@ -146,11 +148,11 @@ exports.saveResult = function (req, res) {
     result_info.save(function (err, data) {
         if (err) {
             console.log("Saving Result Failed.." + err);
-            res.send("Saving Result Failed.." + err);
+            res.json({ success: false, data: err });
         }
         else {
             console.log("Result is Saved..", data, "quizName");
-            res.send('Result Saved..', data);
+            res.json({ success: true, data: data });
         }
         console.log("Result Recived.", data);
         //res.send("Result Recived.")
@@ -161,15 +163,15 @@ exports.showResult = function (req, res) {
     Result.find({ userID: userID }, function (err, data) {
         if (err) {
             console.log("Got Error on Find Results");
-            res.send("An Error ", err);
+            res.json({ success: false, data: err });
         }
         else {
             if (!data) {
                 console.log("record Not found");
-                res.send('Record not found');
+                res.json({ success: false, data: "Record not Found" });
             }
             else {
-                res.send('got data ', data);
+                res.json({ success: true, data: data });
             }
         }
     });

@@ -102,7 +102,7 @@ angular.module('app.getQuestion',[])
                  
                   $http.post(heroku + '/saveResult',{userName: userName, quizTopic:$scope.select.selectedPaper, userID: id, riteans_perc: per}).then(function(data){
                       
-                      console.log('data from save result ', data);
+                      console.log('data from save result ', data.data);
                       
                   },function(err){
                       console.log('Got err from Save Result ' ,err);
@@ -120,16 +120,16 @@ angular.module('app.getQuestion',[])
         $scope._quiz_start = false;
         $scope.results_result = false;
         
-      $http.post('/showResult',{userID:id}).then(function(data){
-          console.log("Showing result ", data.data);
+      $http.post(heroku +'/showResult',{userID:id}).then(function(data){
+          console.log("Showing result ", data.data.data);
           
-          if(data.data == null || data.data == ""){
+          if(data.data.data == null || data.data.data == ""){
               $scope.userResult = "There is no Result to shown.."
               $scope.noResult = true;
           }
           else{
               $scope.noResult = false;
-          $scope.results= data.data;
+          $scope.results= data.data.data;
           console.log("Results " ,$scope.results);
           $scope.lastResult = true;
 
