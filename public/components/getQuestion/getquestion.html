@@ -32,7 +32,7 @@
           <div class="container">
           <div ng-show="quiz_box">
                <form name="quiz-form"> 
-                   <pre style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in data.data">{{user.question}}</pre>
+                   <pre style="margin: 112px 0 54px;padding: 36.5px;"ng-repeat="user in questionArray">{{user}}</pre>
                     
 
                    <ul style="list-style: none;" ng-show="quiz.questionType == 'radioBox'">

@@ -44,7 +44,7 @@ angular.module('app.getQuestion',[])
         $http.post(heroku + '/getquizes',{paper:$scope.select.selectedPaper}).then(function(data)
         {
             
-             $scope.questionArray = data.data;
+             $scope.questionArray = data.data.data;
              console.log('queis array' ,data.data.data);
              if($scope.questionArray == ""){
                  $scope.noQuiz = true;
