@@ -237,12 +237,12 @@ exports.findAllResults = function (req, res) {
     Result.find({ userID: userID }, function (err, data) {
         if (err) {
             console.log("got err", err);
-            res.json("got err Admin", err);
+            res.json({ success: false, data: err });
         }
         else {
             console.log("got data admin ", data);
         }
-        res.json("got Data from aadmin ", data);
+        res.json({ success: true, data: data });
     });
 };
 /*
