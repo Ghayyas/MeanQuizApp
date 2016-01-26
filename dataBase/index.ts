@@ -169,11 +169,11 @@ exports.getquizes = (req,res) => {
        console.log(data);
        if(err){
            console.log('got Error ' +err);
-           res.json('Got Error ' +err);
+           res.json({result: false, data: null});
        }
        else{
            console.log('Got Data ' ,data);
-           res.json("Got Data",data);
+            res.json({result: true, data: data});
        }
        
    })
