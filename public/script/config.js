@@ -76,6 +76,8 @@ angular.module("quizApp")
 
 })
 
+.constant('heroku','https://quiz-app.herokuapp.com')
+
 .run(function($rootScope,$state){
     $rootScope.$on("$stateChangeStart",function(event, toState){
        // var token = localStorage.getItem('id');
