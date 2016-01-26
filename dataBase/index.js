@@ -108,7 +108,7 @@ exports.addQuestion = function (req, res) {
         }
     });
 };
-exports.getQuestion = function (req, res) {
+exports.getquiz = function (req, res) {
     //let quizName = req.body.paper;
     console.log(req.body.paper);
     //quizName = quizName.toLowerCase();

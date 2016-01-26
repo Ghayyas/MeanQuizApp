@@ -156,7 +156,7 @@ exports.addQuestion = (req,res)=>{
     
 }
 
-exports.getQuestion = (req,res)=>{
+exports.getquiz = (req,res)=>{
    //let quizName = req.body.paper;
    console.log(req.body.paper)
    //quizName = quizName.toLowerCase();

@@ -41,7 +41,7 @@ angular.module('app.getQuestion',[])
         
         //console.log("Selected Papervv:",$scope.selectedPaper);
         
-        $http.post(heroku + '/getQuestions',{paper:$scope.select.selectedPaper}).then(function(data)
+        $http.post(heroku + '/getquiz',{paper:$scope.select.selectedPaper}).then(function(data)
         {
             
              $scope.questionArray = data.data;
