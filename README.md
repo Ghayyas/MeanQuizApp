@@ -16,8 +16,8 @@
 
 *In Order to Access Admin panal*
 
-**User Name** : **admin** \n
-**Password** : **admin**
+- **User Name** : **admin** 
+- **Password** : **admin**
 
 *Enjoy..!!*
 
