@@ -5,7 +5,7 @@ angular.module('app.contact',[])
     
    $scope.send = function(){
        
-    $http.post('heroku/emailSend',$scope.sendto).then(function(data){
+    $http.post(heroku + '/emailSend',$scope.sendto).then(function(data){
         console.log("got data from Email " ,data);
         console.log(data.data);
         $mdToast.show(
