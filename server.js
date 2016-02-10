@@ -15,6 +15,13 @@ app.use(methodOverride());
 //router.get('/',database.index)
 var Ipublic = path.resolve(__dirname, 'public');
 app.use(express.static(Ipublic));
+
+app.all('/*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 app.post('/registerUser', database.registerUser);
 app.post('/loginUser', database.loginUser);
 app.post('/addQuestion', database.addQuestion);
