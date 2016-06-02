@@ -1,4 +1,4 @@
-# Simple Mean Stack Quiz App
+# Simple MEAN stack Quiz App
 
 *Technology Which i used Are :*
 
